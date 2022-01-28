@@ -1,6 +1,7 @@
 package sk.itsovy.android.voting
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,7 +21,7 @@ class VotingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val constraintLayout = findViewById<ConstraintLayout>(R.id.constraint_layout)
 
-        val pref = getPreferences(Context.MODE_PRIVATE)
+        val pref = getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
         val name = pref.getString("name", "UNKNOWN")
         val textView = findViewById<TextView>(R.id.name)
         textView.text = name
@@ -35,6 +36,9 @@ class VotingActivity : AppCompatActivity() {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 text = "choice $i"
+                setOnClickListener {
+                    sendVote(i.toString())
+                }
                 constraintLayout.addView(this)
                 list.add(this)
             }
@@ -62,5 +66,12 @@ class VotingActivity : AppCompatActivity() {
 
         constraintSet.applyTo(constraintLayout)
 
+    }
+
+    private fun sendVote(choice: String) {
+        val intent = Intent(this, ResultsActivity::class.java)
+        intent.putExtra("choice", choice)
+
+        startActivity(intent)
     }
 }
